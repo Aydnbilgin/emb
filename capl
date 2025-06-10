@@ -1,0 +1,51 @@
+/*@!Encoding:1254*/
+includes
+{
+}
+variables
+{
+    message 0x1 msg;       // Mesaj 
+    message 0x2 msg2;
+    msTimer myTimer;     // Timer tanımı
+    msTimer myTimer2; 
+	msTimer myDelay;
+    int counter = 0;   // Sayaç
+}
+
+on start
+{
+    msg.ID = 0x1AFF031Fx; // Mesajın CAN ID'si
+    msg.DLC = 8;         // 8 baytlık mesaj
+    msg.byte(0) = 0;     // İlk bayt başlangıç değeri
+    msg.CAN=1;
+    setTimer(myTimer, 40); // 40 ms timer başlat
+  
+    msg2.ID = 0x1AFF0027x; // Mesajın CAN ID'si
+    msg2.DLC = 8;         // 8 baytlık mesaj
+    msg2.byte(0) = 0;     // İlk bayt başlangıç değeri
+    msg2.CAN=1;
+    setTimer(myTimer2, 500); // 40 ms timer başlat
+	setTimer(myDelay, 2000);   // Timer'ı yeniden başlat
+}
+ 
+on timer myTimer
+{
+    output (msg);          
+    if (counter == 0) {         counter = 1;     } else if (counter == 1) {         counter = 0;     }
+          
+    msg.byte(0) = counter; // İlk baytı güncelle
+    setTimer(myTimer, 40);   // Timer'ı yeniden başlat
+	setTimer(myDelay,2000);
+}
+
+on timer myTimer2
+{
+ 
+    output(msg2);          // Mesajı gönder
+    setTimer(myTimer2, 500);   // Timer'ı yeniden başlat
+}
+
+on timer myDelay
+{
+    setTimer(myDelay, 2000);   // Timer'ı yeniden başlat
+}
